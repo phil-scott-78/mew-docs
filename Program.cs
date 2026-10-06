@@ -1,4 +1,7 @@
 using MewDocs.Highlighting;
+using MewDocs.Stdlib;
+using MewDocs.Stdlib.Model;
+using Pennington.Content;
 using Pennington.DocSite;
 using Pennington.Favicon;
 
@@ -134,6 +137,14 @@ builder.Services.AddDocSite(() => new DocSiteOptions
 
     ConfigurePennington = penn => penn.Highlighting.AddHighlighter(new MewHighlighter()),
 });
+
+// The standard library reference is generated from resources/stdlib.xml rather than written by
+// hand: one page per namespace, published into the "Standard Library" area by a content service.
+builder.Services.AddSingleton(_ =>
+    StdlibXmlLoader.Load(Path.Combine(builder.Environment.ContentRootPath, "resources", "stdlib.xml")));
+builder.Services.AddSingleton<StdlibHtmlRenderer>();
+builder.Services.AddSingleton<StdlibContentService>();
+builder.Services.AddSingleton<IContentService>(sp => sp.GetRequiredService<StdlibContentService>());
 
 var app = builder.Build();
 app.UseDocSite();
