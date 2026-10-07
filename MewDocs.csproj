@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pennington.DocSite" Version="0.1.8" />
+    <PackageReference Include="Pennington.DocSite" Version="0.1.9" />
   </ItemGroup>
 
   <ItemGroup>
