@@ -1,3 +1,5 @@
+using Mdazor;
+using MewDocs.Components;
 using MewDocs.Highlighting;
 using Pennington.DocSite;
 using Pennington.Favicon;
@@ -12,11 +14,17 @@ builder.Services.AddDocSite(() => new DocSiteOptions
     GitHubUrl = "https://github.com/mew-lang",
 
     HeaderContent = """
-        <a href="/" class="flex items-center gap-2 font-semibold">
-          <img src="/img/logo.svg" alt="" width="28" height="28" class="rounded bg-white p-px" />
-          <span>Mew</span>
-        </a>
+        <div class="flex items-center gap-6">
+          <a href="/" class="flex items-center gap-2 font-semibold">
+            <img src="/img/logo.svg" alt="" width="28" height="28" class="rounded bg-white p-px" />
+            <span>Mew</span>
+          </a>
+          <a href="/playground" data-spa-reload class="text-sm font-medium text-base-600 hover:text-primary-700 dark:text-base-400 dark:hover:text-primary-400">Playground</a>
+        </div>
         """,
+
+    // The /playground page lives in this assembly.
+    AdditionalRoutingAssemblies = [typeof(Program).Assembly],
 
     FooterContent = """
         <footer class="mt-16 py-8 text-center text-sm text-base-500">
@@ -132,9 +140,22 @@ builder.Services.AddDocSite(() => new DocSiteOptions
         new ContentArea("Future", "future"),
     ],
 
-    ConfigurePennington = penn => penn.Highlighting.AddHighlighter(new MewHighlighter()),
+    ConfigurePennington = penn =>
+    {
+        penn.Highlighting.AddHighlighter(new MewHighlighter());
+        penn.Highlighting.AddHighlighter(new IlHighlighter());
+    },
 });
 
+// The playground island renders as WebAssembly in the browser. It is prerendered here first,
+// which constructs it, so its service has to exist on the server as well.
+builder.Services.AddSingleton<MewDocs.Client.MewCompiler>();
+
+// <MewPipeline> in Markdown compiles its program while the page renders and shows every stage.
+builder.Services.AddMdazorComponent<MewPipeline>();
+
 var app = builder.Build();
+
 app.UseDocSite();
+
 await app.RunDocSiteAsync(args);

@@ -5,14 +5,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>MewDocs</RootNamespace>
+    <!-- The playground client is its own project in a subfolder; keep its files out of this one. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);MewDocs.Client\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pennington.DocSite" Version="0.1.8" />
+    <PackageReference Include="Pennington.DocSite" Version="0.1.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="MewDocs.Client\MewDocs.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Highlighting/mew.tmLanguage.json" />
+    <EmbeddedResource Include="Highlighting/il.tmLanguage.json" />
   </ItemGroup>
 
   <ItemGroup>
